@@ -58,8 +58,8 @@ def get_rouge2(model, endCnt= 200, inputSens= inputSens):
     reference_lns = []
     sum_cont= 0
     for i, input in enumerate(inputSens):
-        # if sum_cont >= endCnt:
-        #     break
+        if sum_cont >= endCnt:
+            break
         # input_text = "summarize: "+input[textt]
         input_text = input[textt]
         if len(input_text.split(" "))< 300:
@@ -92,6 +92,7 @@ def binary_search_bw_len(min_bw_len, max_bw_len):
         print(count,"|4-bit:", min_bw_len, "/", max_bw_len, "   |relative rouge2",relative_rouge2)
         if relative_rouge2 >= 0.95:
             max_bw_len = mid_bw_len
+            return min_bw_len
         else:
             min_bw_len = mid_bw_len + 1
     return min_bw_len
