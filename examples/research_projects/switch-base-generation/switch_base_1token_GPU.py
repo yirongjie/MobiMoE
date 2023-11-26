@@ -1,21 +1,13 @@
 from transformers import AutoTokenizer, SwitchTransformersModel, SwitchTransformersModelYRJ, ExpertManager
-# from transformers.models.switch_transformers import LoadFunc, globalMultiEvent, globalMultiThreadRun, globalMultiParam
 import time
 import os
+import torch
+
 ExpertManager.Pwd = os.path.dirname(os.path.realpath(__file__))
-# ExpertManager.Pwd = "/media/nvidia/EY/transformers/examples/research_projects/switch-base-generation/"
 ExpertManager.Device = "cuda"
 ExpertManager.CacheLimit = 12
-
 ExpertManager.FTpwd = "-samsum"
 base_num = 8
-
-# ExpertManager.FTpwd = "-samsum"
-# base_num = 16
-
-# ExpertManager.FTpwd = ""
-# base_num = 32
-
 
 if __name__ == '__main__':
     tokenizer = AutoTokenizer.from_pretrained(os.path.dirname(os.path.realpath(__file__))+"/models/switch-base-"+str(base_num)+ExpertManager.FTpwd+"-yrj")
@@ -28,16 +20,17 @@ if __name__ == '__main__':
 
     decoder_input_ids = model._shift_right(decoder_input_ids)
 
-
     time_ = 0
     loop = 1
     for i in range(0, loop):
+        torch.cuda.synchronize()  # Wait for all CUDA cores to finish their tasks
         start = time.time()
-        outputs = model(input_ids=input_ids, decoder_input_ids=decoder_input_ids)
-        # print(outputs[0])
+        with torch.no_grad():  # Avoid saving intermediate layer outputs
+            outputs = model(input_ids=input_ids, decoder_input_ids=decoder_input_ids)
+        torch.cuda.synchronize()  # Wait for all CUDA cores to finish their tasks
         end = time.time()
         time_ += (end - start)/loop
+
+    peak_memory = torch.cuda.max_memory_allocated()  # Get peak GPU memory usage
     print("Inference Time:", time_, "s")
-
-
-
+    print("Peak GPU Memory Usage:", peak_memory / 1024 ** 2, "MB")  # Print peak GPU memory usage

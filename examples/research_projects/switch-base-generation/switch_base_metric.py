@@ -1,4 +1,5 @@
 from rouge_score import rouge_scorer, scoring
+import torch
 
 def cal_rouge2(sen1,sen2):
     scorer = rouge_scorer.RougeScorer(['rouge2'], use_stemmer=True)
@@ -43,7 +44,7 @@ ExpertManager.Pwd = os.path.dirname(os.path.realpath(__file__))
 # model = SwitchTransformersForConditionalGenerationYRJ.from_pretrained(os.path.dirname(os.path.realpath(__file__))+"/models/switch-base-8"+ExpertManager.FTpwd+"-yrj")
 
 ExpertManager.Device = "cuda"
-ExpertManager.CacheLimit = 1
+ExpertManager.CacheLimit = 12
 ExpertManager.FTpwd = "-samsum"
 # ExpertManager.FTpwd = ""
 tokenizer = AutoTokenizer.from_pretrained(os.path.dirname(os.path.realpath(__file__))+"/models/switch-base-8"+ExpertManager.FTpwd+"-yrj")
@@ -51,20 +52,24 @@ model = SwitchTransformersForConditionalGenerationYRJ.from_pretrained(os.path.di
 
 output_lns= []
 reference_lns = []
+sum_cont= 0
 for i, input in enumerate(inputSens):
-    # if i > 200:
-    #     break
+    if sum_cont >= 200:
+        break
     # input_text = "summarize: "+input[textt]
     input_text = input[textt]
     if len(input_text.split(" "))< 300:
         label_text = input["summary"]
         input_ids = tokenizer(input_text, return_tensors="pt").input_ids
         input_ids = input_ids.to('cuda:0')
-        outputs = model.generate(input_ids, max_new_tokens=100)
+        with torch.no_grad():  # Avoid saving intermediate layer outputs
+            outputs = model.generate(input_ids, max_new_tokens=100)
         output_text = tokenizer.decode(outputs[0])
         output_text=output_text.replace("<pad> ","")
         output_text=output_text.replace("</s>","")
         output_lns.append(output_text)
         reference_lns.append(label_text)
+        sum_cont += 1
 result = calculate_rouge(output_lns, reference_lns, use_stemmer=True)
 print(result)
+print("total cnt:", sum_cont)

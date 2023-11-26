@@ -21,7 +21,8 @@ model = SwitchTransformersForConditionalGenerationYRJ.from_pretrained(os.path.di
 input_text = "Eric: MACHINE! Rob: That's so great! Eric: I know! And shows how Americans see Russian ;) Rob: And it's really funny! Eric: I know! I especially like the train part! Rob: Hahaha! No one talks to the machine like that! Eric: Is this his only stand-up? Rob: Idk. I'll check. Eric: Sure. Rob: Turns out no! There are some of his stand-ups on youtube. Eric: Gr8! I'll watch them now! Rob: Me too! Eric: MACHINE! Rob: MACHINE! Eric: TTYL? Rob: Sure :)"
 
 input_ids = tokenizer(input_text, return_tensors="pt").input_ids
-outputs = model.generate(input_ids)
+with torch.no_grad():  # Avoid saving intermediate layer outputs
+    outputs = model.generate(input_ids)
 print(tokenizer.decode(outputs[0]))
 # >>> <pad> <extra_id_0> man<extra_id_1> beer<extra_id_2> a<extra_id_3> salt<extra_id_4>.</s>
 
