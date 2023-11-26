@@ -1904,7 +1904,7 @@ import pickle
 import math
 
 ###### whether use threading for preload
-THREAD = False
+THREAD = True
 globalLock  = threading.Lock()
 globalEvent  = threading.Event()
 globalThreadRun = True
