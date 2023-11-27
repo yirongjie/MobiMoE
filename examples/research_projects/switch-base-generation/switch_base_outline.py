@@ -29,7 +29,8 @@ from datasets import load_dataset
 
 dataset_name = "samsum"
 
-dataset = load_dataset(dataset_name, cache_dir=os.path.dirname(os.path.realpath(__file__))+'/datasets')
+# dataset = load_dataset(dataset_name, cache_dir=os.path.dirname(os.path.realpath(__file__))+'/datasets')
+dataset = load_dataset(os.path.dirname(os.path.realpath(__file__))+'/datasets/'+dataset_name)
 inputSens = dataset['test']
 textt = "dialogue"
 print(inputSens.__len__())

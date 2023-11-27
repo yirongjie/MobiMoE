@@ -1,0 +1,19 @@
+load= 0.4915008544921875 s
+encoder= 2.870880365371704 s
+decoder= 1.0806941986083984 s
+Filename: ./memory_profile.py
+
+Line #    Mem usage    Increment  Occurrences   Line Contents
+=============================================================
+    14    248.4 MiB    248.4 MiB           1   @profile
+    15                                         def switch_genrate():
+    16                                             
+    17    248.4 MiB      0.0 MiB           1       ExpertManager.Device = "cpu"
+    18    281.2 MiB     32.8 MiB           1       tokenizer = AutoTokenizer.from_pretrained(os.path.dirname(os.path.realpath(__file__))+"/models/switch-base-32"+ExpertManager.FTpwd+"-yrj")
+    19   1258.1 MiB    976.9 MiB           1       model = SwitchTransformersModelYRJ.from_pretrained(os.path.dirname(os.path.realpath(__file__))+"/models/switch-base-32"+ExpertManager.FTpwd+"-yrj")
+    20   1260.3 MiB      2.2 MiB           2       input_ids = tokenizer(
+    21   1258.1 MiB      0.0 MiB           1           "Studies have been shown that owning a dog is good for you", return_tensors="pt"
+    22                                             ).input_ids  # Batch size 1
+    23   1260.3 MiB      0.0 MiB           1       decoder_input_ids = tokenizer("Studies show that", return_tensors="pt").input_ids  # Batch size 1
+    24   1261.1 MiB      0.8 MiB           1       decoder_input_ids = model._shift_right(decoder_input_ids)
+    25   1273.8 MiB     12.7 MiB           1       outputs = model(input_ids=input_ids, decoder_input_ids=decoder_input_ids)
