@@ -39,17 +39,27 @@ ops = {
     ">": operator.gt,
 }
 
-
+import subprocess
+def is_jetson_tx2():
+    try:
+        uname_output = subprocess.check_output(['uname', '--all']).decode('utf-8')
+        return 'nvidia' in uname_output and 'tegra' in uname_output
+    except FileNotFoundError:
+        return False
+        
 def _compare_versions(op, got_ver, want_ver, requirement, pkg, hint):
     if got_ver is None or want_ver is None:
         raise ValueError(
             f"Unable to compare versions for {requirement}: need={want_ver} found={got_ver}. This is unusual. Consider"
             f" reinstalling {pkg}."
         )
-    # if not ops[op](version.parse(got_ver), version.parse(want_ver)):
-    #     raise ImportError(
-    #         f"{requirement} is required for a normal functioning of this module, but found {pkg}=={got_ver}.{hint}"
-    #     )
+    
+    if not is_jetson_tx2():
+        if not ops[op](version.parse(got_ver), version.parse(want_ver)):
+            raise ImportError(
+                f"{requirement} is required for a normal functioning of this module, but found {pkg}=={got_ver}.{hint}"
+            )
+
 
 
 def require_version(requirement: str, hint: Optional[str] = None) -> None:
