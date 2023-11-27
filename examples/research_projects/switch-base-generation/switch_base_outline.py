@@ -95,9 +95,8 @@ def binary_search_bw_len(min_bw_len, max_bw_len):
         count += 1
         mid_bw_len = (min_bw_len + max_bw_len) // 2
         ExpertManager.bwList = bwList_pool[:mid_bw_len]
-        relative_rouge2, part_times = get_rouge2(model, endCnt=outline_endCnt, inputSens=inputSens) / origin_rouge2
-        print(count,"|4-bit:", min_bw_len, "/", max_bw_len, "   |relative rouge2",relative_rouge2, "|time:", part_times, "s")
-        total_times += part_times
+        relative_rouge2 = get_rouge2(model, endCnt=outline_endCnt, inputSens=inputSens) / origin_rouge2
+        print(count,"|4-bit:", min_bw_len, "/", max_bw_len, "   |relative rouge2",relative_rouge2)
         if relative_rouge2 >= 0.95:
             max_bw_len = mid_bw_len
             print("total_times:", total_times, "s")
