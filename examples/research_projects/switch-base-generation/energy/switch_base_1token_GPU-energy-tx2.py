@@ -39,11 +39,14 @@ if __name__ == '__main__':
     decoder_input_ids = tokenizer("", return_tensors="pt").input_ids.to(0)  # Batch size 1
 
     decoder_input_ids = model._shift_right(decoder_input_ids)
-
+    for i in range(0, 10):
+        with torch.no_grad():  # Avoid saving intermediate layer outputs
+            outputs = model(input_ids=input_ids, decoder_input_ids=decoder_input_ids)
     # run()
     p_est = PowerEstimator()
     total_energy, total_energy_over_idle, total_time = p_est.estimate_fn_power(run)
     print("Total energy consumption was = %7.3f J" % (total_energy / 1000.0))
     print("Total energy over baseline was = %7.3f J" % (total_energy_over_idle / 1000.0))
+    print("This energy consumption was = %7.3f J" % ((total_energy-total_energy_over_idle) / 1000.0))
     print("Total time running was = %5.2f s" % total_time)
 

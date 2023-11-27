@@ -1912,7 +1912,7 @@ globalParam = []
 
 ####### print flag
 PRINT = False
-PRINTPLT = False
+PRINTPLT = True
 PRINTTOKEN = False
 PLRINTHIT =  False
 
