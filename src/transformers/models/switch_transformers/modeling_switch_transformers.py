@@ -1978,7 +1978,7 @@ def dequantize_channel( bits,load_weight,scale,zero_point, fp_size):
         this_module =  torch.tensor(quantized_, device=device_).view(fp_size)
         #dequantize
         tp2=time.time()
-        result = this_module*scale+zero_point
+        result = this_module*scale.to(device_) #+zero_point
         tp3=time.time()
         # print(tp2-tp1, tp3-tp2)
         return result
